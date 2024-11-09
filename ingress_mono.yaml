@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-service-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: / # Optional: remove if not needed
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: localhost
+      http:
+        paths:
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: multi-service-pod
+                port:
+                  number: 84  # Port for auth-service
+          - path: /campground
+            pathType: Prefix
+            backend:
+              service:
+                name: multi-service-pod
+                port:
+                  number: 81  # Port for campground-service
+          - path: /chat
+            pathType: Prefix
+            backend:
+              service:
+                name: multi-service-pod
+                port:
+                  number: 82  # Port for llm-chat-service
+          - path: /mail
+            pathType: Prefix
+            backend:
+              service:
+                name: multi-service-pod
+                port:
+                  number: 83  # Port for mail-service

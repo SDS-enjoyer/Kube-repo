@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-chat-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-chat-service
+  template:
+    metadata:
+      labels:
+        app: llm-chat-service
+    spec:
+      containers:
+        - name: llm-chat-service
+          image: final-project-llm-chat-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 82
+          env:
+            - name: PORT
+              value: "82"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: NODE_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: HOST
+            - name: AUTH_SERVICE_URL
+              value: "http://localhost:84/api/v1/auth"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-chat-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: llm-chat-service
+  ports:
+    - port: 82
+      targetPort: 82
+
+
+

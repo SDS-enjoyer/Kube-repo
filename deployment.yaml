@@ -1,0 +1,242 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-service-pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: multi-service-pod
+  template:
+    metadata:
+      labels:
+        app: multi-service-pod
+    spec:
+      containers:
+        - name: auth-service
+          image: final-project-auth-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 84
+          env:
+            - name: PORT
+              value: "84"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_REGION
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: HOST
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: S3_BUCKET_NAME
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_SECRET_ACCESS_KEY
+
+        - name: campground-service
+          image: final-project-campground-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 81
+          env:
+            - name: PORT
+              value: "81"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_REGION
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: HOST
+            - name: S3_BUCKET_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: S3_BUCKET_NAME
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:84/api/v1/auth"
+
+        - name: llm-chat-service
+          image: final-project-llm-chat-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 82
+          env:
+            - name: PORT
+              value: "82"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: NODE_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: HOST
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:84/api/v1/auth"
+
+        - name: mail-service
+          image: final-project-mail-service:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 83
+          env:
+            - name: PORT
+              value: "83"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: NODE_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: HOST
+            - name: AUTH_EMAIL
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AUTH_EMAIL
+            - name: AUTH_PASS
+              valueFrom:
+                configMapKeyRef:
+                  name: env-config
+                  key: AUTH_PASS
+            - name: AUTH_SERVICE_URL
+              value: "http://localhost:84/api/v1/auth"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: multi-service-pod
+spec:
+  type: LoadBalancer
+  ports:
+    - name: auth-port
+      port: 84      # Route traffic for auth-service
+      targetPort: 84 # Container port for auth-service
+    - name: campground-port
+      port: 81      # Route traffic for campground-service
+      targetPort: 81 # Container port for campground-service
+    - name: chat-port
+      port: 82      # Route traffic for llm-chat-service
+      targetPort: 82 # Container port for llm-chat-service
+    - name: mail-port
+      port: 83      # Route traffic for mail-service
+      targetPort: 83 # Container port for mail-service
+  selector:
+    app: multi-service-pod
+
+
