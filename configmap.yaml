@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: my-app
+data:
+  NODE_ENV: "development"
+  JWT_EXPIRE: "365d"
+  JWT_COOKIE_EXPIRE: "365"
+  AWS_REGION: "ap-southeast-1"
+  S3_BUCKET_NAME: "campground-final-project"

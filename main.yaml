@@ -1,0 +1,240 @@
+# Deployments and Services for all four microservices
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: docker.io/tenkr/auth-service-image:lastest
+          ports:
+            - containerPort: 80
+          env:
+            - name: PORT
+              value: "80"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_EXPIRE
+            - name: JWT_COOKIE_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: JWT_COOKIE_EXPIRE
+            - name: HOST
+              value: "http://auth-service.my-app.svc.cluster.local"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: my-app
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: campground-service
+  namespace: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: campground-service
+  template:
+    metadata:
+      labels:
+        app: campground-service
+    spec:
+      containers:
+        - name: campground-service
+          image: docker.io/tenkr/campground-service-image:lastest
+          ports:
+            - containerPort: 81
+          env:
+            - name: PORT
+              value: "81"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NODE_ENV
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: MONGO_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service.my-app.svc.cluster.local/api/v1/auth"
+            - name: HOST
+              value: "http://campground-service.my-app.svc.cluster.local"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: campground-service
+  namespace: my-app
+spec:
+  selector:
+    app: campground-service
+  ports:
+    - protocol: TCP
+      port: 81
+      targetPort: 81
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-chat-service
+  namespace: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: llm-chat-service
+  template:
+    metadata:
+      labels:
+        app: llm-chat-service
+    spec:
+      containers:
+        - name: llm-chat-service
+          image: docker.io/tenkr/llm-chat-service-image:lastest
+          ports:
+            - containerPort: 82
+          env:
+            - name: PORT
+              value: "82"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NODE_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service.my-app.svc.cluster.local/api/v1/auth"
+            - name: HOST
+              value: "http://llm-chat-service.my-app.svc.cluster.local"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm-chat-service
+  namespace: my-app
+spec:
+  selector:
+    app: llm-chat-service
+  ports:
+    - protocol: TCP
+      port: 82
+      targetPort: 82
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mail-service
+  namespace: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mail-service
+  template:
+    metadata:
+      labels:
+        app: mail-service
+    spec:
+      containers:
+        - name: mail-service
+          image: docker.io/tenkr/mail-service-image:lastest
+          ports:
+            - containerPort: 83
+          env:
+            - name: PORT
+              value: "83"
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: NODE_ENV
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: JWT_SECRET
+            - name: AUTH_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_EMAIL
+            - name: AUTH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: AUTH_PASS
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service.my-app.svc.cluster.local/api/v1/auth"
+            - name: HOST
+              value: "http://mail-service.my-app.svc.cluster.local"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mail-service
+  namespace: my-app
+spec:
+  selector:
+    app: mail-service
+  ports:
+    - protocol: TCP
+      port: 83
+      targetPort: 83
