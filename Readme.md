@@ -10,6 +10,12 @@ minikube start
 minikube stop
 ```
 
+### create namespace
+
+```sh
+kubectl create namespace my-app
+```
+
 ### delete all pod
 
 ```sh
