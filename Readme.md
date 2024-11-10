@@ -33,6 +33,13 @@ kubectl get all -n my-app
 ```sh
 kubectl apply -f mock.yaml
 kubectl apply -f secrets.yaml
+kubectl apply -f ingress.yaml
+```
+
+### check ingress
+
+```sh
+kubectl get ingress -n my-app
 ```
 
 ### Port forward to test
