@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: final-project-auth-service:latest
-          imagePullPolicy: Never
+          image: tenkr/auth-service-image:lastest
           ports:
             - containerPort: 84
           env:
@@ -73,8 +72,7 @@ spec:
                   key: AWS_SECRET_ACCESS_KEY
 
         - name: campground-service
-          image: final-project-campground-service:latest
-          imagePullPolicy: Never
+          image: tenkr/campground-service-image:lastest
           ports:
             - containerPort: 81
           env:
@@ -131,11 +129,10 @@ spec:
                   name: env-config
                   key: AWS_SECRET_ACCESS_KEY
             - name: AUTH_SERVICE_URL
-              value: "http://auth-service:84/api/v1/auth"
+              value: "http://localhost:84/api/v1/auth"
 
         - name: llm-chat-service
-          image: final-project-llm-chat-service:latest
-          imagePullPolicy: Never
+          image: tenkr/llm-chat-service-image:lastest
           ports:
             - containerPort: 82
           env:
@@ -167,11 +164,10 @@ spec:
                   name: env-config
                   key: HOST
             - name: AUTH_SERVICE_URL
-              value: "http://auth-service:84/api/v1/auth"
+              value: "http://localhost:84/api/v1/auth"
 
         - name: mail-service
-          image: final-project-mail-service:latest
-          imagePullPolicy: Never
+          image: tenkr/mail-service-image:lastest
           ports:
             - containerPort: 83
           env:
