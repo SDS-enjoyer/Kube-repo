@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: campground-service
-          image: final-project-campground-service:latest
-          imagePullPolicy: Never
+          image: docker.io/tenkr/campground-service-image:lastest
           ports:
             - containerPort: 81
           env:

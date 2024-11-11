@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: mail-service
-          image: final-project-mail-service:latest
-          imagePullPolicy: Never
+          image: docker.io/tenkr/mail-service-image:lastest
           ports:
             - containerPort: 83
           env:

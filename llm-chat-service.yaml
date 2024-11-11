@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: llm-chat-service
-          image: final-project-llm-chat-service:latest
-          imagePullPolicy: Never
+          image: docker.io/tenkr/llm-chat-service-image:lastest
           ports:
             - containerPort: 82
           env:

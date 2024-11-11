@@ -14,8 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: final-project-auth-service:latest
-          imagePullPolicy: Never
+          image: docker.io/tenkr/auth-service-image:latest
           ports:
             - containerPort: 84
           env:
