@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: docker.io/tenkr/auth-service-image:latest
+          image: docker.io/tenkr/auth-service-image:lastest
           ports:
             - containerPort: 84
           env:
