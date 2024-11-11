@@ -51,7 +51,7 @@ spec:
             - name: HOST
               value: "http://auth-service.my-app.svc.cluster.local"
             - name: EMAIL_SERVICE_URL
-              value: "heep://mail-service.my-app.svc.cluster.local"
+              value: "http://mail-service.my-app.svc.cluster.local:83/api/v1"
 
 ---
 apiVersion: v1
