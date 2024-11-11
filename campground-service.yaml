@@ -52,10 +52,7 @@ spec:
                   name: env-config
                   key: AWS_REGION
             - name: HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: env-config
-                  key: HOST
+              value: "http://campground-service.default.svc.cluster.local"
             - name: S3_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:

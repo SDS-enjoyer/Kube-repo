@@ -52,10 +52,7 @@ spec:
                   name: env-config
                   key: AWS_REGION
             - name: HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: env-config
-                  key: HOST
+              value: "http://auth-service.default.svc.cluster.local"
             - name: S3_BUCKET_NAME
               valueFrom:
                 configMapKeyRef:
@@ -72,7 +69,7 @@ spec:
                   name: env-config
                   key: AWS_SECRET_ACCESS_KEY
             - name: EMAIL_SERVICE_URL
-              value: "http://mail-service.my-app.svc.cluster.local"
+              value: "http://mail-service.my-app.svc.cluster.local:81"
 
 ---
 

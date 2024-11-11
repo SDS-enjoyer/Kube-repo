@@ -42,10 +42,7 @@ spec:
                   name: env-config
                   key: JWT_COOKIE_EXPIRE
             - name: HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: env-config
-                  key: HOST
+              value: "http://llm-chat-service.default.svc.cluster.local"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service.default.svc.cluster.local:84/api/v1/auth"
 
