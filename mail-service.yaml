@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: mail-service
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mail-service
