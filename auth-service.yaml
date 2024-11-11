@@ -71,6 +71,8 @@ spec:
                 configMapKeyRef:
                   name: env-config
                   key: AWS_SECRET_ACCESS_KEY
+            - name: EMAIL_SERVICE_URL
+              value: "http://mail-service.my-app.svc.cluster.local"
 
 ---
 
