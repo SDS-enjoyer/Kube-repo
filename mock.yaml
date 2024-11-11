@@ -50,6 +50,8 @@ spec:
                   key: JWT_COOKIE_EXPIRE
             - name: HOST
               value: "http://auth-service.my-app.svc.cluster.local"
+            - name: EMAIL_SERVICE_URL
+              value: "heep://mail-service.my-app.svc.cluster.local"
 
 ---
 apiVersion: v1
@@ -58,12 +60,14 @@ metadata:
   name: auth-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: auth-service
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
+      nodePort: 30080
 
 ---
 apiVersion: apps/v1
@@ -116,12 +120,14 @@ metadata:
   name: campground-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: campground-service
   ports:
     - protocol: TCP
       port: 81
       targetPort: 81
+      nodePort: 30081
 
 ---
 apiVersion: apps/v1
@@ -169,12 +175,14 @@ metadata:
   name: llm-chat-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: llm-chat-service
   ports:
     - protocol: TCP
       port: 82
       targetPort: 82
+      nodePort: 30082
 
 ---
 apiVersion: apps/v1
@@ -232,12 +240,14 @@ metadata:
   name: mail-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: mail-service
   ports:
     - protocol: TCP
       port: 83
       targetPort: 83
+      nodePort: 30083
 
 # ConfigMap for environment variables
 ---

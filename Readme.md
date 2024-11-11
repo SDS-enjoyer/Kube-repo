@@ -42,6 +42,12 @@ kubectl apply -f ingress.yaml
 kubectl get ingress -n my-app
 ```
 
+### Create tunnel
+
+```sh
+minikube tunnel
+```
+
 ### Port forward to test
 
 ```
