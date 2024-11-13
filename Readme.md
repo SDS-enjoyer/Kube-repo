@@ -62,3 +62,16 @@ kubectl port-forward service/mail-service 8083:83 -n my-app
 ```sh
 kubectl logs <pod-name> -n my-app
 ```
+
+### prune on k3s
+
+```sh
+sudo k3s ctr images prune --all
+
+```
+
+### delete image k3s
+
+```sh
+sudo k3s ctr image rm <image-name>
+```

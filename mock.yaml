@@ -202,7 +202,7 @@ spec:
     spec:
       containers:
         - name: mail-service
-          image: docker.io/tenkr/mail-service-image:lastest
+          image: docker.io/tenkr/mail-service-image:v2
           ports:
             - containerPort: 83
           env:
