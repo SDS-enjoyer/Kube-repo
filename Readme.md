@@ -75,3 +75,9 @@ sudo k3s ctr images prune --all
 ```sh
 sudo k3s ctr image rm <image-name>
 ```
+
+### token
+
+```sh
+cat ~/.kube/node_token
+```

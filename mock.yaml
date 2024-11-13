@@ -15,6 +15,15 @@ spec:
       labels:
         app: auth-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: auth-service
           image: docker.io/tenkr/auth-service-image:lastest
@@ -85,6 +94,15 @@ spec:
       labels:
         app: campground-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: campground-service
           image: docker.io/tenkr/campground-service-image:lastest
@@ -145,6 +163,15 @@ spec:
       labels:
         app: llm-chat-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: llm-chat-service
           image: docker.io/tenkr/llm-chat-service-image:lastest
@@ -200,6 +227,15 @@ spec:
       labels:
         app: mail-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: mail-service
           image: docker.io/tenkr/mail-service-image:v2
