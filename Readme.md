@@ -33,19 +33,6 @@ kubectl get all -n my-app
 ```sh
 kubectl apply -f mock.yaml
 kubectl apply -f secrets.yaml
-kubectl apply -f ingress.yaml
-```
-
-### check ingress
-
-```sh
-kubectl get ingress -n my-app
-```
-
-### Create tunnel
-
-```sh
-minikube tunnel
 ```
 
 ### Port forward to test
@@ -56,6 +43,8 @@ kubectl port-forward service/campground-service 8081:81 -n my-app
 kubectl port-forward service/llm-chat-service 8082:82 -n my-app
 kubectl port-forward service/mail-service 8083:83 -n my-app
 ```
+
+## k3s check status
 
 ### logs
 

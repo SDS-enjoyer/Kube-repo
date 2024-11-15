@@ -15,6 +15,15 @@ spec:
       labels:
         app: auth-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: auth-service
           image: docker.io/tenkr/auth-service-image:lastest
@@ -50,6 +59,8 @@ spec:
                   key: JWT_COOKIE_EXPIRE
             - name: HOST
               value: "http://auth-service.my-app.svc.cluster.local"
+            - name: EMAIL_SERVICE_URL
+              value: "http://mail-service.my-app.svc.cluster.local:83/api/v1"
 
 ---
 apiVersion: v1
@@ -58,12 +69,14 @@ metadata:
   name: auth-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: auth-service
   ports:
     - protocol: TCP
       port: 80
       targetPort: 80
+      nodePort: 30080
 
 ---
 apiVersion: apps/v1
@@ -81,6 +94,15 @@ spec:
       labels:
         app: campground-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: campground-service
           image: docker.io/tenkr/campground-service-image:lastest
@@ -116,12 +138,14 @@ metadata:
   name: campground-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: campground-service
   ports:
     - protocol: TCP
       port: 81
       targetPort: 81
+      nodePort: 30081
 
 ---
 apiVersion: apps/v1
@@ -139,6 +163,15 @@ spec:
       labels:
         app: llm-chat-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: llm-chat-service
           image: docker.io/tenkr/llm-chat-service-image:lastest
@@ -169,12 +202,14 @@ metadata:
   name: llm-chat-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: llm-chat-service
   ports:
     - protocol: TCP
       port: 82
       targetPort: 82
+      nodePort: 30082
 
 ---
 apiVersion: apps/v1
@@ -192,9 +227,18 @@ spec:
       labels:
         app: mail-service
     spec:
+      tolerations:
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 10
       containers:
         - name: mail-service
-          image: docker.io/tenkr/mail-service-image:lastest
+          image: docker.io/tenkr/mail-service-image:v2
           ports:
             - containerPort: 83
           env:
@@ -232,9 +276,29 @@ metadata:
   name: mail-service
   namespace: my-app
 spec:
+  type: NodePort
   selector:
     app: mail-service
   ports:
     - protocol: TCP
       port: 83
       targetPort: 83
+      nodePort: 30083
+
+# ConfigMap for environment variables
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: my-app
+data:
+  NODE_ENV: "development"
+  JWT_EXPIRE: "365d"
+  JWT_COOKIE_EXPIRE: "365"
+  AWS_REGION: "ap-southeast-1"
+  S3_BUCKET_NAME: "campground-final-project"
+
+## Copy Secret from secrets.yaml
+---
+
