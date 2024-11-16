@@ -28,10 +28,10 @@ spec:
         - name: auth-service
           image: docker.io/tenkr/auth-service-image:lastest
           ports:
-            - containerPort: 80
+            - containerPort: 84
           env:
             - name: PORT
-              value: "80"
+              value: "84"
             - name: NODE_ENV
               valueFrom:
                 configMapKeyRef:
@@ -74,8 +74,8 @@ spec:
     app: auth-service
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 84
+      targetPort: 84
 
 ---
 apiVersion: apps/v1
