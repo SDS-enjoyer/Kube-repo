@@ -6,7 +6,7 @@ metadata:
   name: auth-service
   namespace: my-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: auth-service
@@ -69,7 +69,7 @@ metadata:
   name: auth-service
   namespace: my-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: auth-service
   ports:
@@ -85,7 +85,7 @@ metadata:
   name: campground-service
   namespace: my-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: campground-service
@@ -138,14 +138,13 @@ metadata:
   name: campground-service
   namespace: my-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: campground-service
   ports:
     - protocol: TCP
       port: 81
-      targetPort: 81
-      nodePort: 30081
+      targetPort: 30081
 
 ---
 apiVersion: apps/v1
@@ -154,7 +153,7 @@ metadata:
   name: llm-chat-service
   namespace: my-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: llm-chat-service
@@ -202,14 +201,13 @@ metadata:
   name: llm-chat-service
   namespace: my-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: llm-chat-service
   ports:
     - protocol: TCP
       port: 82
-      targetPort: 82
-      nodePort: 30082
+      targetPort: 30082
 
 ---
 apiVersion: apps/v1
@@ -218,7 +216,7 @@ metadata:
   name: mail-service
   namespace: my-app
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mail-service
@@ -276,14 +274,13 @@ metadata:
   name: mail-service
   namespace: my-app
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: mail-service
   ports:
     - protocol: TCP
       port: 83
-      targetPort: 83
-      nodePort: 30083
+      targetPort: 30083
 
 # ConfigMap for environment variables
 ---
