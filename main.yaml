@@ -6,7 +6,7 @@ metadata:
   name: auth-service
   namespace: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: auth-service
@@ -84,7 +84,7 @@ metadata:
   name: campground-service
   namespace: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: campground-service
@@ -152,7 +152,7 @@ metadata:
   name: llm-chat-service
   namespace: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: llm-chat-service
@@ -215,7 +215,7 @@ metadata:
   name: mail-service
   namespace: my-app
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: mail-service
