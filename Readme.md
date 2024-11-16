@@ -8,7 +8,7 @@ curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s
 ```
 
 ### 2. Taint the Master Node
-Prevent the master node from running application pods by adding a taint. Replace <NODE_NAME> with the name of your node:
+Prevent the master node from running application pods by adding a taint. Replace `<NODE_NAME>` with the name of your server node:
 ```sh
 kubectl taint nodes <NODE_NAME> node-role.kubernetes.io/master=:NoSchedule
 ```
