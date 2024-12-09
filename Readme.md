@@ -1,115 +1,169 @@
-# K3s Setup Guide
+# K3s Cluster Setup Guide
 
-## 1. Start the K3s Server
+This guide explains how to set up a K3s cluster with a notebook as the master node and Raspberry Pi devices as worker nodes.
 
-Run this command on your main server (notebook) to initialize the master node/controller:
+## Prerequisites
+
+- A notebook/laptop for the master node
+- One or more Raspberry Pi devices for worker nodes
+- All devices connected to the same network
+- SSH access to all devices
+
+## Setup Steps
+
+### 1. Master Node Setup
+
+Initialize the K3s server on your notebook:
 
 ```sh
 curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -s
 ```
 
-### 2. Taint the Master Node
+### 2. Master Node Configuration
 
-Prevent the master node from running application pods by adding a taint. Replace `<NODE_NAME>` with the name of your server node:
+Apply a taint to prevent workloads from running on the master node:
 
 ```sh
+# Replace <NODE_NAME> with your master node's name
 kubectl taint nodes <NODE_NAME> node-role.kubernetes.io/master=:NoSchedule
 ```
 
-### 3. Start the K3s Agent on Raspberry Pi
+### 3. Worker Node Setup
 
-Connect each Raspberry Pi node to the master server to act as an agent. Replace `<Token From Main Cluster>`, `<Main Cluster IP>`, and `<Node Name>`
+Get the master node token:
 
 ```sh
-curl -sfL https://get.k3s.io | K3S_TOKEN="<Token From Main Cluster>" K3S_URL="https://<Main Cluster IP>:6443" K3S_NODE_NAME="<Node Name>" sh -
+sudo cat /var/lib/rancher/k3s/server/node-token
 ```
 
-### 4. Create a Namespace
-
-Create a namespace to organize your application resources. Run this on the master node:
+On each Raspberry Pi, run:
 
 ```sh
+curl -sfL https://get.k3s.io | K3S_TOKEN="<Token From Main Cluster>" \
+K3S_URL="https://<Main Cluster IP>:6443" \
+K3S_NODE_NAME="<Node Name>" sh -
+```
+
+### 4. Application Deployment
+
+Create and configure the application namespace:
+
+```sh
+# Create namespace
 kubectl create namespace my-app
-```
 
-### 5. Delete All Pods in the Namespace
-
-Ensure that the my-app namespace is clear of existing resources:
-
-```sh
+# Clean up any existing resources
 kubectl delete all --all -n my-app
-```
 
-### 6. Apply Configuration Files
-
-Deploy your application by applying the necessary YAML files:
-
-```sh
-kubectl apply -f main.yaml
+# Apply configurations
+kubectl apply -f services.yaml
+kubectl apply -f deployments.yaml
+kubectl apply -f ingress.yaml
 kubectl apply -f secrets.yaml
 ```
 
-### 7. List All Pods in the Namespace
+### 5. Verify Deployment
 
-Verify the pods running in the my-app namespace:
+Check the status of your deployment:
 
 ```sh
+# List all pods
 kubectl get pods -n my-app
+
+# List all services
+kubectl get services -n my-app
+
+# List all deployments
+kubectl get deployments -n my-app
+
+# Check ingress status
+kubectl get ingress -n my-app
 ```
 
-### 8. Port Forwarding for Local Testing
+## Maintenance and Troubleshooting
 
-Forward local ports to the services for testing. Run the following commands on the master node:
+### Logging
 
-```
-kubectl port-forward service/auth-service 8080:80 -n my-app
-kubectl port-forward service/campground-service 8081:81 -n my-app
-kubectl port-forward service/llm-chat-service 8082:82 -n my-app
-kubectl port-forward service/mail-service 8083:83 -n my-app
-```
-
-### 9. ./port-forward-services.sh script
-
-Run the script to forward all services to the local machine.
-
-```sh
-chomd +x port-forward-services.sh
-./port-forward-services.sh
-```
-
----
-
-# K3s Maintenance and Troubleshooting
-
-### 1. Check Logs
-
-View the logs of a specific pod in the my-app namespace. Replace <pod-name> with the pod's name:
+View logs for specific pods:
 
 ```sh
 kubectl logs <pod-name> -n my-app
+
+# Follow logs in real-time
+kubectl logs -f <pod-name> -n my-app
 ```
 
-## 2. Prune Unused K3s Images
+### Container Image Management
 
-Clean up unused container images to free up space:
+Clean up unused images:
 
 ```sh
 sudo k3s ctr images prune --all
-
 ```
 
-### 3. Delete a Specific Image
-
-Remove an image from the K3s container runtime. Replace `<image-name>` with the name of the image to delete:
+Remove specific images:
 
 ```sh
 sudo k3s ctr image rm <image-name>
 ```
 
-### 4. Retrieve the K3s Server Token
+### Cluster Management
 
-Get the K3s server token to connect agents to the cluster:
+View node status:
 
 ```sh
-sudo cat /var/lib/rancher/k3s/server/node-token
+kubectl get nodes
+
+# Detailed node information
+kubectl describe node <node-name>
 ```
+
+Check cluster health:
+
+```sh
+kubectl get componentstatuses
+kubectl cluster-info
+```
+
+### Common Issues
+
+1. **Node Not Joining Cluster**
+
+   - Verify network connectivity
+   - Check token and URL accuracy
+   - Ensure ports 6443 and 10250 are open
+
+2. **Pods Not Starting**
+
+   - Check node resources: `kubectl describe node <node-name>`
+   - View pod events: `kubectl describe pod <pod-name> -n my-app`
+   - Check logs: `kubectl logs <pod-name> -n my-app`
+
+3. **Service Connectivity Issues**
+   - Verify service status: `kubectl get svc -n my-app`
+   - Check endpoint status: `kubectl get endpoints -n my-app`
+   - Test service DNS: `kubectl run -it --rm debug --image=busybox -- nslookup <service-name>.my-app`
+
+## Architecture
+
+The application consists of four microservices:
+
+- Auth Service (Port 80)
+- Campground Service (Port 81)
+- LLM Chat Service (Port 82)
+- Mail Service (Port 83)
+
+All services are accessible through the Ingress controller at their respective paths:
+
+- /auth
+- /campgrounds
+- /chat
+- /mail
+
+## Security Notes
+
+- Keep the K3s token secure and never share it publicly
+- Regularly update K3s and container images
+- Monitor cluster logs for suspicious activities
+- Use network policies to restrict pod-to-pod communication
+- Keep secrets encrypted and regularly rotate credentials
